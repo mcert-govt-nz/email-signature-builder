@@ -337,10 +337,12 @@
 </style>
 <script src="https://alcdn.msauth.net/browser/2.38.2/js/msal-browser.min.js"></script>
 <script>
-// If running inside the MSAL auth popup, hide the page and let MSAL
-// handle the redirect response then close the popup automatically.
+// If running inside the MSAL auth popup, stop everything.
+// The main window monitors this popup's URL for the auth code hash —
+// we must NOT load our own MSAL instance or it will consume the hash first.
 if (window.opener && window.opener !== window) {
   document.documentElement.style.display = 'none';
+  window.stop();
 }
 </script>
 </head>
