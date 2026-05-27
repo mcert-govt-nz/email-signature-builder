@@ -550,63 +550,54 @@ function generateSignatureHtml() {
   const includeDisclaimer = document.getElementById('includeDisclaimer').checked;
 
   const fullName = [firstName, lastName].filter(Boolean).join(' ');
-  const pronounsHtml = pronouns ? ` <span style="font-weight:normal;">(${escapeHtml(pronouns)})</span>` : '';
+
+  const FONT = "Calibri, 'Source Sans 3', 'Source Sans Pro', Arial, sans-serif";
+  const SEP = `<span style="font-family:${FONT};color:#BCBEC0;">|</span>`;
 
   // Build contact line parts
   const contactParts = [];
-  if (email) contactParts.push(`<a href="mailto:${escapeHtml(email)}" style="color:#005b73;text-decoration:none;">${escapeHtml(email)}</a>`);
-  if (phone) contactParts.push(`Phone: ${escapeHtml(phone)}`);
-  if (mobile) contactParts.push(`Mobile: ${escapeHtml(mobile)}`);
-  const contactLine = contactParts.join(' <span style="color:#BCBEC0;">|</span> ');
+  if (email) contactParts.push(`<a href="mailto:${escapeHtml(email)}" style="font-family:${FONT};color:#005b73;text-decoration:none;">${escapeHtml(email)}</a>`);
+  if (phone) contactParts.push(`<span style="font-family:${FONT};">Phone: ${escapeHtml(phone)}</span>`);
+  if (mobile) contactParts.push(`<span style="font-family:${FONT};">Mobile: ${escapeHtml(mobile)}</span>`);
+  const contactLine = contactParts.join(` ${SEP} `);
 
   // Build role line
-  const roleParts = [jobTitle, department].filter(Boolean);
-  const roleLine = roleParts.join(' <span style="color:#BCBEC0;">|</span> ');
+  const roleParts = [jobTitle, department].filter(Boolean).map(p => `<span style="font-family:${FONT};">${escapeHtml(p)}</span>`);
+  const roleLine = roleParts.join(` ${SEP} `);
 
   // Build address/website line parts
   const addressParts = [];
-  addressParts.push(`<a href="${WEBSITE_URL}" style="color:#005b73;text-decoration:none;">${WEBSITE_DISPLAY}</a>`);
-  if (address) addressParts.push(escapeHtml(address));
-  const addressLine = addressParts.join(' <span style="color:#BCBEC0;">|</span> ');
+  addressParts.push(`<a href="${WEBSITE_URL}" style="font-family:${FONT};color:#005b73;text-decoration:none;">${WEBSITE_DISPLAY}</a>`);
+  if (address) addressParts.push(`<span style="font-family:${FONT};">${escapeHtml(address)}</span>`);
+  const addressLine = addressParts.join(` ${SEP} `);
 
   // Build banner HTML
   const bannerHtml = includeBanner ? `
-    <table cellpadding="0" cellspacing="0" role="presentation" style="width:460px;margin-top:8px;">
-      <tr>
-        <td style="padding:0;margin:0;">
-          <a href="${WEBSITE_URL}" style="display:block;margin:0;padding:0;">
-            <img src="data:image/png;base64,${BANNER_BASE64}" alt="Ministry for Cities, Environment, Regions &amp; Transport" width="460" style="display:block;width:460px;height:auto;border:0;" />
-          </a>
-        </td>
-      </tr>
-    </table>` : '';
+    <tr>
+      <td style="padding:8px 0 0 0;">
+        <a href="${WEBSITE_URL}" style="display:block;margin:0;padding:0;">
+          <img src="data:image/png;base64,${BANNER_BASE64}" alt="Ministry for Cities, Environment, Regions &amp; Transport" width="460" style="display:block;width:460px;height:auto;border:0;" />
+        </a>
+      </td>
+    </tr>` : '';
 
   // Build disclaimer HTML
   const disclaimerHtml = includeDisclaimer ? `
-    <table cellpadding="0" cellspacing="0" role="presentation" style="width:460px;margin-top:4px;">
-      <tr>
-        <td style="font-family:'Source Sans 3','Source Sans Pro',Calibri,Arial,sans-serif;font-size:10.2px;font-weight:600;color:#005b73;line-height:1.4;padding-bottom:6px;border-bottom:1px solid #000;">
-          This email and any attachments may contain information that is confidential and subject to legal privilege. If you are not the intended recipient, please notify the sender and delete this email.
-        </td>
-      </tr>
-    </table>` : '';
-
-  const html = `<div style="font-family:'Source Sans 3','Source Sans Pro',Calibri,Arial,sans-serif;color:#005b73;line-height:1.4;">
-  <hr style="border:0;border-top:2px solid #005b73;margin:4px 0 12px 0;width:460px;" />
-  ${fullName ? `<p style="margin:0;font-size:14px;font-weight:bold;">${escapeHtml(fullName)}${pronounsHtml}</p>` : ''}
-  ${roleLine ? `<p style="margin:0;font-size:12px;color:#000000;"><span style="font-weight:normal;">${roleLine}</span></p>` : ''}
-  ${group ? `<p style="margin:0;font-size:12px;color:#000000;font-weight:normal;">${escapeHtml(group)}</p>` : ''}
-  ${contactLine ? `<p style="margin:0;font-size:12px;color:#000000;font-weight:normal;">${contactLine}</p>` : ''}
-  <table cellpadding="0" cellspacing="0" role="presentation" style="width:460px;margin-top:4px;">
     <tr>
-      <td style="vertical-align:middle;font-size:12px;color:#000000;padding:0;margin:0;">
-        ${addressLine}
+      <td style="font-family:${FONT};font-size:10.2px;font-weight:600;color:#005b73;line-height:1.4;padding:4px 0 6px 0;border-bottom:1px solid #000;">
+        This email and any attachments may contain information that is confidential and subject to legal privilege. If you are not the intended recipient, please notify the sender and delete this email.
       </td>
-    </tr>
-  </table>
+    </tr>` : '';
+
+  const html = `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="width:460px;border-collapse:collapse;font-family:${FONT};color:#005b73;line-height:1.4;">
+  ${fullName ? `<tr><td style="font-family:${FONT};font-size:14px;font-weight:bold;color:#005b73;padding:0;margin:0;mso-line-height-rule:exactly;">${escapeHtml(fullName)}${pronouns ? ` <span style="font-family:${FONT};font-weight:normal;">(${escapeHtml(pronouns)})</span>` : ''}</td></tr>` : ''}
+  ${roleLine ? `<tr><td style="font-family:${FONT};font-size:12px;color:#000000;font-weight:normal;padding:0;margin:0;mso-line-height-rule:exactly;">${roleLine}</td></tr>` : ''}
+  ${group ? `<tr><td style="font-family:${FONT};font-size:12px;color:#000000;font-weight:normal;padding:0;margin:0;mso-line-height-rule:exactly;">${escapeHtml(group)}</td></tr>` : ''}
+  ${contactLine ? `<tr><td style="font-family:${FONT};font-size:12px;color:#000000;font-weight:normal;padding:0;margin:0;mso-line-height-rule:exactly;">${contactLine}</td></tr>` : ''}
+  <tr><td style="font-family:${FONT};font-size:12px;color:#000000;padding:4px 0 0 0;margin:0;mso-line-height-rule:exactly;">${addressLine}</td></tr>
   ${bannerHtml}
   ${disclaimerHtml}
-</div>`;
+</table>`;
 
   return html;
 }
